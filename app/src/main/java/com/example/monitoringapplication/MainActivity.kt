@@ -1,39 +1,30 @@
 package com.example.monitoringapplication
 
-import androidx.appcompat.app.AppCompatActivity
+import CoinViewModel
 import android.os.Bundle
 import android.util.Log
-import com.example.monitoringapplication.Api.ApiFactory
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+
 
 class MainActivity : AppCompatActivity() {
 
-    private val compositeDispostable = CompositeDisposable()
+
+    private lateinit var viewModel : CoinViewModel
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        viewModel = ViewModelProvider(this)[CoinViewModel:: class.java]
+        viewModel.loadData()
+        viewModel.priceList.observe(this, Observer {
 
-        ApiFactory.apiService.getTopCoinsInfo()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                       Log.d("TEST" ,it.toString())
-
-        },{
-
-        })
-
-
+            Log.d("TEST_OF_DATA", "Success $it") })
         }
-    override fun onDestroy() {
-        super.onDestroy()
 
-        compositeDispostable.dispose()
-    }
 
 
 
